@@ -8,4 +8,8 @@ for (int i = 0; i < input.Length; i++)
     stack.Push(input[i]);
 }
 
-Console.WriteLine(string.Join("", stack));
+while (stack.Count > 0)
+{
+    char symbol = stack.Pop();
+    Console.Write(symbol);
+}
