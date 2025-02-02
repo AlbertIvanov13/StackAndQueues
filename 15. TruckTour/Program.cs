@@ -20,36 +20,40 @@ int tankFill = 0;
 int consumedPetrol = 0;
 int newNumber = 0;
 int startingPumpIndex = 0;
-bool isFirst = true;
+bool isFirst = false;
+int newIndex = 0;
 
-foreach (var item in queue.ToList())
+
+for (int i = 0 ; i < petrolPumpsCount; i++)
 {
     Tuple<int, int> dequeuedTuple = queue.Dequeue().ToTuple();
     int l = dequeuedTuple.Item1;
     int k = dequeuedTuple.Item2;
-    tankFill = newNumber + l;
+    tankFill += l;
     consumedPetrol = tankFill - k;
+    newNumber = consumedPetrol;
+    queue.Enqueue((l, k));
     if (consumedPetrol < 0)
     {
-        consumedPetrol = 0;
+        tankFill = 0;
         isFirst = true;
-        startingPumpIndex = indexes.Dequeue();
-        indexes.Enqueue(startingPumpIndex);
+        int index = indexes.Dequeue();
+        indexes.Enqueue(index);
     }
     else
     {
-        newNumber = consumedPetrol;
         if (isFirst)
         {
-            startingPumpIndex = indexes.Dequeue();
-            indexes.Enqueue(startingPumpIndex);
+            newIndex = indexes.Dequeue();
             isFirst = false;
         }
-        startingPumpIndex = indexes.Dequeue();
-        indexes.Enqueue(startingPumpIndex);
+        else
+        {
+            int index = indexes.Dequeue();
+            indexes.Enqueue(index);
+        }
+        tankFill = consumedPetrol;
     }
-    queue.Enqueue((l, k));
 }
 
-//startingPump
-Console.WriteLine(indexes.Dequeue());
+Console.WriteLine(newIndex);
