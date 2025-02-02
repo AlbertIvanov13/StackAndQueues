@@ -2,11 +2,12 @@
 string parentheses = Console.ReadLine();
 
 Stack<string> stack = new Stack<string>();
+Queue<string> queue = new Queue<string>();
 Dictionary<string, string> dict = new Dictionary<string, string>()
 {
-	["("] = ")",
-	["["] = "]",
-	["{"] = "}",
+    ["("] = ")",
+    ["{"] = "}",
+    ["["] = "]",
 };
 
 for (int i = 0; i < parentheses.Length; i++)
@@ -23,31 +24,40 @@ for (int i = 0; i < parentheses.Length; i++)
 	{
 		stack.Push("[");
 	}
-    else if (parentheses[i].ToString() == ")")
+
+    if (parentheses[i].ToString() == ")")
     {
-        stack.Push(")");
+        queue.Enqueue(")");
     }
     else if (parentheses[i].ToString() == "}")
     {
-        stack.Push("}");
+        queue.Enqueue("}");
     }
     else if (parentheses[i].ToString() == "]")
     {
-        stack.Push("]");
+        queue.Enqueue("]");
     }
 }
 
-bool isTrue = false;
-while (stack.Count > 0)
+while (queue.Count > 0)
 {
-	string symbol = stack.Pop();
-	foreach (var item in dict)
-	{
-		if (item.Value == symbol)
-		{
-			isTrue = true;
-		}
-	}
+    foreach (var item in dict)
+    {
+        if (stack.Count > 0)
+        {
+            string stackSymbol = stack.Peek();
+            string queueSymbol = queue.Peek();
+            if (stackSymbol == item.Key)
+            {
+                if (item.Value == queueSymbol)
+                {
+                    stack.Pop();
+                    queue.Dequeue();
+                }
+            }
+            queue.Dequeue();
+        }
+    }
 }
 
 if (stack.Count == 0)
