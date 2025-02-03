@@ -1,5 +1,4 @@
-﻿
-string parentheses = Console.ReadLine();
+﻿string parentheses = Console.ReadLine();
 
 Stack<string> stack = new Stack<string>();
 Queue<string> queue = new Queue<string>();
@@ -12,18 +11,18 @@ Dictionary<string, string> dict = new Dictionary<string, string>()
 
 for (int i = 0; i < parentheses.Length; i++)
 {
-	if (parentheses[i].ToString() == "(")
-	{
-		stack.Push("(");
-	}
-	else if (parentheses[i].ToString() == "{")
-	{
-		stack.Push("{");
-	}
-	else if (parentheses[i].ToString() == "[")
-	{
-		stack.Push("[");
-	}
+    if (parentheses[i].ToString() == "(")
+    {
+        stack.Push("(");
+    }
+    else if (parentheses[i].ToString() == "{")
+    {
+        stack.Push("{");
+    }
+    else if (parentheses[i].ToString() == "[")
+    {
+        stack.Push("[");
+    }
 
     if (parentheses[i].ToString() == ")")
     {
@@ -39,28 +38,26 @@ for (int i = 0; i < parentheses.Length; i++)
     }
 }
 
-while (queue.Count > 0)
+for (int i = 0; i < parentheses.Length; i++)
 {
-    foreach (var item in dict)
+    foreach (var sym in dict)
     {
-        if (stack.Count > 0)
+        if (stack.Count > 0 && queue.Count > 0)
         {
-            string stackSymbol = stack.Peek();
-            string queueSymbol = queue.Peek();
-            if (stackSymbol == item.Key)
+            if (queue.Peek() == sym.Value)
             {
-                if (item.Value == queueSymbol)
-                {
-                    stack.Pop();
-                    queue.Dequeue();
-                }
+                stack.Pop();
+                queue.Dequeue();
             }
-            queue.Dequeue();
+            //else
+            //{
+            //    continue;
+            //}
         }
     }
 }
 
-if (stack.Count == 0)
+if (stack.Count == 0 && queue.Count == 0)
 {
     Console.WriteLine("YES");
 }
