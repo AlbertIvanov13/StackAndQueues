@@ -38,6 +38,7 @@ for (int i = 0; i < parentheses.Length; i++)
     }
 }
 
+bool isTrue = false;
 for (int i = 0; i < parentheses.Length; i++)
 {
     foreach (var sym in dict)
@@ -48,11 +49,21 @@ for (int i = 0; i < parentheses.Length; i++)
             {
                 stack.Pop();
                 queue.Dequeue();
+                isTrue = true;
+                break;
             }
-            //else
-            //{
-            //    continue;
-            //}
+            else
+            {
+                if (!isTrue)
+                {
+                    queue.Dequeue();
+                    isTrue = true;
+                }
+            }
+        }
+        else
+        {
+            break;
         }
     }
 }
