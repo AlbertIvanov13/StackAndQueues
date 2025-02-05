@@ -1,18 +1,17 @@
-﻿int greenLightDuration = int.Parse(Console.ReadLine());
+﻿
+int greenLightDuration = int.Parse(Console.ReadLine());
 int freeWindowDuration = int.Parse(Console.ReadLine());
 
 Queue<string> cars = new Queue<string>();
-Queue<string> newCars = new Queue<string>();
-
-int count = 0;
-int timeLeft = 0;
-int freeWindowLeft = 0;
-string passingCar = "";
-string hittedElement = "";
-string crashedCar = "";
-bool isCrashed = false;
+Queue<string> possibleCrash = new Queue<string>();
 
 string input = Console.ReadLine();
+
+int timeLeft = 0;
+int freeWindowLeft = 0;
+int totalCarsPassed = 0;
+string crashedSymbol = "";
+string crashedCar = "";
 
 while (input != "END")
 {
@@ -20,58 +19,50 @@ while (input != "END")
     {
         while (cars.Count > 0)
         {
-            passingCar = cars.Dequeue();
-            Queue<string> queue = new Queue<string>();
-            Queue<string> newQueue = new Queue<string>();
-            foreach (var item in passingCar)
-            {
-                queue.Enqueue(item.ToString());
-            }
+            string passingCar = cars.Dequeue();
+
+            Queue<string> pass = new Queue<string>();
+
             if (timeLeft > 0)
             {
+                foreach (var item in passingCar)
+                {
+                    pass.Enqueue(item.ToString());
+                }
+
                 for (int i = 0; i < timeLeft; i++)
                 {
-                    if (passingCar.Length > i)
+                    if (pass.Count > 0)
                     {
-                        queue.Dequeue();
+                        pass.Dequeue();
                     }
                 }
-                while (queue.Count > 0)
+
+                if (pass.Count == 0)
                 {
-                    newQueue.Enqueue(queue.Dequeue());
+                    totalCarsPassed++;
+                    possibleCrash.Dequeue();
                 }
-                if (newQueue.Count == 0)
+
+                if (pass.Count > 0 && pass.Count <= freeWindowLeft)
                 {
-                    count++;
+                    freeWindowLeft -= pass.Count;
+                    totalCarsPassed++;
                 }
                 else
                 {
-                    while (newQueue.Count <= freeWindowLeft)
+                    while (pass.Count > 0 && pass.Count >= freeWindowLeft)
                     {
-                        if (newQueue.Count > 0)
-                        {
-                            newQueue.Dequeue();
-                        }
-                        else
-                        {
-                            break;
-                        }
+                        pass.Dequeue();
                     }
 
-                    if (newQueue.Count == 0)
+                    if (pass.Count > 0)
                     {
-                        count++;
-                    }
-                    else
-                    {
-                        while (newQueue.Count >= freeWindowLeft)
-                        {
-                            newQueue.Dequeue();
-                        }
-                        hittedElement = newQueue.Dequeue();
-                        crashedCar = newCars.Dequeue();
-                        isCrashed = true;
-
+                        crashedCar = possibleCrash.Dequeue();
+                        crashedSymbol = pass.Dequeue();
+                        Console.WriteLine("A crash happened!");
+                        Console.WriteLine($"{crashedCar} was hit at {crashedSymbol}.");
+                        return;
                     }
                 }
                 timeLeft -= passingCar.Length;
@@ -81,20 +72,13 @@ while (input != "END")
     else
     {
         cars.Enqueue(input);
-        newCars.Enqueue(input);
+        possibleCrash.Enqueue(input);
         timeLeft = greenLightDuration;
         freeWindowLeft = freeWindowDuration;
     }
+
     input = Console.ReadLine();
 }
 
-if (isCrashed)
-{
-    Console.WriteLine("A crash happened!");
-    Console.WriteLine($"{crashedCar} was hit at {hittedElement}.");
-}
-else
-{
-    Console.WriteLine("Everyone is safe.");
-    Console.WriteLine($"{count} total cars passed the crossroads.");
-}
+Console.WriteLine("Everyone is safe.");
+Console.WriteLine($"{totalCarsPassed} total cars passed the crossroads.");
